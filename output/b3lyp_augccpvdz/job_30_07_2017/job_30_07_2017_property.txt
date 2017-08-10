@@ -1,0 +1,111 @@
+-----------------------------------------------------------
+----------------------- PROPERTIES ------------------------
+-----------------------------------------------------------
+                    PROPERTY:
+        Name:                SCF_Energy                      
+        Comment:             The SCF Energy                                                                                                              
+        Geometry:            1
+        Type:                DOUBLE
+        Value:               -14.7469295698245446
+                    PROPERTY:
+        Name:                SCF_Energy                      
+        Comment:             The SCF Energy                                                                                                              
+        Geometry:            2
+        Type:                DOUBLE
+        Value:               -14.8768756077915647
+                    PROPERTY:
+        Name:                SCF_Energy                      
+        Comment:             The SCF Energy                                                                                                              
+        Geometry:            3
+        Type:                DOUBLE
+        Value:               -15.0223836202405110
+                    PROPERTY:
+        Name:                SCF_Energy                      
+        Comment:             The SCF Energy                                                                                                              
+        Geometry:            4
+        Type:                DOUBLE
+        Value:               -15.1574874178848997
+                    PROPERTY:
+        Name:                SCF_Energy                      
+        Comment:             The SCF Energy                                                                                                              
+        Geometry:            5
+        Type:                DOUBLE
+        Value:               -15.2188171285002074
+                    PROPERTY:
+        Name:                SCF_Energy                      
+        Comment:             The SCF Energy                                                                                                              
+        Geometry:            6
+        Type:                DOUBLE
+        Value:               -15.2190211750227107
+                    PROPERTY:
+        Name:                SCF_Energy                      
+        Comment:             The SCF Energy                                                                                                              
+        Geometry:            7
+        Type:                DOUBLE
+        Value:               -15.2190853583070940
+                    PROPERTY:
+        Name:                SCF_Energy                      
+        Comment:             The SCF Energy                                                                                                              
+        Geometry:            8
+        Type:                DOUBLE
+        Value:               -15.2190853971108186
+                    PROPERTY:
+        Name:                SCF_Energy                      
+        Comment:             The SCF Energy                                                                                                              
+        Geometry:            9
+        Type:                DOUBLE
+        Value:               -15.2190853970896018
+                    PROPERTY:
+        Name:                SCF_Energy                      
+        Comment:             The SCF Energy                                                                                                              
+        Geometry:            9
+        Type:                DOUBLE
+        Value:               -15.2190853970896764
+-----------------------------------------------------------
+----------------------- GEOMETRIES ------------------------
+-----------------------------------------------------------
+                    GEOMETRY:    1
+        Number of atoms:    2
+        Coordinates:
+            N      0.000000000000    0.000000000000    0.000000000000
+            N      1.000000000000    1.000000000000    1.000000000000
+                    GEOMETRY:    2
+        Number of atoms:    2
+        Coordinates:
+            N      0.045828090549    0.045828090549    0.045828090549
+            N      0.954171909451    0.954171909451    0.954171909451
+                    GEOMETRY:    3
+        Number of atoms:    2
+        Coordinates:
+            N      0.091656181098    0.091656181098    0.091656181098
+            N      0.908343818902    0.908343818902    0.908343818902
+                    GEOMETRY:    4
+        Number of atoms:    2
+        Coordinates:
+            N      0.137484271647    0.137484271647    0.137484271647
+            N      0.862515728353    0.862515728353    0.862515728353
+                    GEOMETRY:    5
+        Number of atoms:    2
+        Coordinates:
+            N      0.183312362197    0.183312362197    0.183312362197
+            N      0.816687637803    0.816687637803    0.816687637803
+                    GEOMETRY:    6
+        Number of atoms:    2
+        Coordinates:
+            N      0.179594844741    0.179594844741    0.179594844741
+            N      0.820405155259    0.820405155259    0.820405155259
+                    GEOMETRY:    7
+        Number of atoms:    2
+        Coordinates:
+            N      0.180795141750    0.180795141750    0.180795141750
+            N      0.819204858250    0.819204858250    0.819204858250
+                    GEOMETRY:    8
+        Number of atoms:    2
+        Coordinates:
+            N      0.180823004721    0.180823004721    0.180823004721
+            N      0.819176995279    0.819176995279    0.819176995279
+                    GEOMETRY:    9
+        Number of atoms:    2
+        Coordinates:
+            N      0.180822696229    0.180822696229    0.180822696229
+            N      0.819177303771    0.819177303771    0.819177303771
