@@ -15,18 +15,22 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
+import re
+from ORCAunleashed import orca,tools
 from karminus.experiment import exp_chemical_shifts
 from karminus.tools import path_tool
 from matplotlib import pyplot as plt
 from scipy.stats import linregress
 
-def report_calibration(basis_set=None, method=None):
+def report_calibration(basis_set=None, method=None, nuclei_type=None):
+	calib_report = { }
 	comp_shifts = { }
 
 	e_shifts = exp_chemical_shifts.e_shifts
 
-	import re
-	from ORCAunleashed import orca,tools
+	if nuclei_type is None:
+		nuclei_type = 'H'
+
 	for exp in e_shifts:
 		rep = orca.reporter_by_name(exp,output_root_dir=path_tool.output_dir(basis_set=basis_set, method=method))
 		c_shifts = tools.chemical_shifts(rep)
@@ -40,7 +44,7 @@ def report_calibration(basis_set=None, method=None):
 		comp_shifts[exp] = c_shifts
 
 
-	nuclei_type = 'C'
+	#nuclei_type = 'C'
 
 	pxs,pys = [],[]
 	for exp in e_shifts:
@@ -60,8 +64,12 @@ def report_calibration(basis_set=None, method=None):
 	slope, intercept, r_value, p_value, std_err = linregress(pxs, pys)
 	print("slope {} | intercept {} | r2 {} | stddev {}".format(
 		slope,intercept,r_value**2,std_err))
-	plt.plot(pxs, [slope*x + intercept for x in pxs], 'r--')
 
+	calib_report['slope'],calib_report['intercept'] = slope,intercept
+	calib_report['r_value'],calib_report['p_value'] = r_value,p_value
+	calib_report['std_err'] = std_err
+
+	plt.plot(pxs, [slope*x + intercept for x in pxs], 'r--')
 	plt.show()
 
 
@@ -75,6 +83,8 @@ def report_calibration(basis_set=None, method=None):
 	print("RMS",rms)
 	print("MAE", mae)
 
+	calib_report['rms'],calib_report['mae'] = rms,mae
+
 	print("The database has {} entries".format(
 		len(e_shifts)
 	))
@@ -84,6 +94,7 @@ def report_calibration(basis_set=None, method=None):
 		count += len([shift for shift in e_shifts[exp] if nuclei_type in shift])
 
 	print("with {} chemical shifts".format(count))
+	return calib_report
 
 if __name__ == '__main__':
 	report_calibration(method=sys.argv[1],basis_set=sys.argv[2])

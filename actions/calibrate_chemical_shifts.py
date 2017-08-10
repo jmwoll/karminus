@@ -16,6 +16,7 @@
 
 import os
 import sys
+from karminus.tools import path_tool
 from ORCAunleashed import orca
 
 def calibrate_chemical_shifts(basis_set="aug-cc-pVDZ",
@@ -31,12 +32,15 @@ def calibrate_chemical_shifts(basis_set="aug-cc-pVDZ",
 	print("calibration will be performed with the following orca input:")
 	print(orca_input)
 
-	script_dir = os.path.dirname(os.path.realpath(__file__))
-	project_dir = os.path.dirname(script_dir)
-	xyz_dir = os.path.join(project_dir,'xyz')
-	xyz_dir = os.path.join(xyz_dir, 'default_db') + os.sep
-	output_dir = os.path.join(os.path.join(project_dir,'output'),
-	 	method.lower() + "_" + basis_set.lower().replace('-','')) + os.sep
+	#script_dir = os.path.dirname(os.path.realpath(__file__))
+	#project_dir = os.path.dirname(script_dir)
+	#xyz_dir = os.path.join(project_dir,'xyz')
+	#xyz_dir = os.path.join(xyz_dir, 'default_db') + os.sep
+	#output_dir = os.path.join(os.path.join(project_dir,'output'),
+	# 	method.lower() + "_" + basis_set.lower().replace('-','')) + os.sep
+	project_dir = path_tool.project_dir()
+	xyz_dir = path_tool.xyz_dir()
+	output_dir = path_too.output_dir(basis_set=basis_set,method=method)
 
 	print("all .xyz-files in {} will be used".format(xyz_dir))
 
