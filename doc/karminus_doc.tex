@@ -1,0 +1,71 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[top=2cm,bottom=2cm,right=3cm,left=3cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{tikz}
+\renewcommand{\familydefault}{\sfdefault}
+
+\usepackage{listings,color}
+
+\definecolor{verbgray}{gray}{0.9}
+
+\lstnewenvironment{code}{%
+  \lstset{backgroundcolor=\color{verbgray},
+  frame=single,
+  framerule=0pt,
+  basicstyle=\ttfamily,
+  columns=fullflexible}}{}
+
+\definecolor{shadecolor}{rgb}{.9, .9, .9}
+
+\begin{document}
+\renewcommand{\familydefault}{\sfdefault}
+
+General workflow for running \textit{ab initio} chemical shift calculations
+with \texttt{karminus}:
+\begin{enumerate}
+\item Decide on a set of reference compounds (from here on termed the training set) and add all geometries 
+in the xyz/ directory. Delete all prior .xyz files in that directory.
+\item Add the experimental chemical shifts for the compounds to\newline
+\verb!experiment/exp_chemical_shifts.py! according
+to the scheme described in the comments of that file.
+\item Execute
+\begin{code}
+python actions/calibrate_chemical_shifts.py --method <method> \
+  --basis_set <basis_set>
+\end{code}
+which will perform all calculations necessary and will automatically save the generated output in \verb!output\!.
+\item Execute
+\begin{code}
+python actions/report_calibration.py --method <method> \
+  --basis_set <basis_set> --nuclei_type <nucleus>
+\end{code}
+which will extract the chemical shifts, average homotopic protons, perform a calibration and finally report the calibration and core statistics about the success of the chemical shift calibration.
+A plot is also generated, that can be saved in several graphics formats.\\
+The calibration is now done, and can be applied to new compounds via the formula
+	$\delta (\sigma) = \sigma \cdot \text{slope} + \text{intercept}$.
+Alternatively, the following steps can be performed to automate the process of nmr calculation and calibration:
+\item Run the chemical shift calculation jobs on which the
+calibration should be applied via
+\begin{code}
+actions/run_job.py --method <method> --basis_set <basis_set> \
+  --xyz_file <absolute-path-to-xyzfile.xyz>
+\end{code}
+which will generate output in \verb!output/!.
+\item Finally, the calibration can then be applied to the calculated chemical shifts:
+\begin{code}
+actions/apply_calibration.py --method <method> \
+  --basis_set <basis_set> --job_name <jobname> \
+  --nuclei_type <nucleus>
+\end{code}
+Which will print out the calibrated chemical shifts.
+\end{enumerate}
+
+
+\end{document}
+
+
+

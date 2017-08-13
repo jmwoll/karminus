@@ -22,7 +22,11 @@ from karminus.tools import path_tool
 from matplotlib import pyplot as plt
 from scipy.stats import linregress
 
-def report_calibration(basis_set=None, method=None, nuclei_type=None):
+
+def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_runtime=None):
+	if overall_runtime is None or overall_runtime.lower() == 'false':
+		overall_runtime = False
+	import seaborn as sns
 	calib_report = { }
 	comp_shifts = { }
 
@@ -60,6 +64,8 @@ def report_calibration(basis_set=None, method=None, nuclei_type=None):
 
 	plt.plot(pxs,pys,'bo')
 
+	calib_report['pxs'] = pxs
+	calib_report['pys'] = pys
 
 	slope, intercept, r_value, p_value, std_err = linregress(pxs, pys)
 	print("slope {} | intercept {} | r2 {} | stddev {}".format(
@@ -94,7 +100,39 @@ def report_calibration(basis_set=None, method=None, nuclei_type=None):
 		count += len([shift for shift in e_shifts[exp] if nuclei_type in shift])
 
 	print("with {} chemical shifts".format(count))
+	if overall_runtime:
+		overall_runtime = 0.0
+		for exp in e_shifts:
+			rep = orca.reporter_by_name(exp,output_root_dir=path_tool.output_dir(basis_set=basis_set, method=method))
+			overall_runtime += tools.run_time(rep)
+
+	print("overall runtime: {} minutes".format(overall_runtime))
 	return calib_report
 
 if __name__ == '__main__':
-	report_calibration(method=sys.argv[1],basis_set=sys.argv[2])
+	import argparse
+	from argparse import RawDescriptionHelpFormatter
+
+	parser = argparse.ArgumentParser(description=(
+	    """Given the computational method <method> and the basis_set <basis_set>,
+	actions\\report_calibration.py reports the current calibration that has been created before
+	with actions\\calibrate_chemical_shifts.py. For example,
+
+	    $ python report_calibration.py --method BP86 --basis_set ccpVDZ --nuclei_type C
+
+	will show the calibration for 13C nuclei using basis_set cc-pVDZ and BP86 functional.
+	The calibration function will be shown and it's slope, intercept is given.
+	Furthermore, statistics like r^2 value, standard deviation, mean absolute error
+	and mean square root error are reported.
+	"""
+	), formatter_class=RawDescriptionHelpFormatter)
+
+	parser.add_argument('--method', nargs=1, help='the computational method, e.g. B3LYP')
+	parser.add_argument('--basis_set', nargs=1, help='the basis set to use, e.g. ccpVDZ')
+	parser.add_argument('--nuclei_type', nargs=1, help='the type of nuclei for which to compute chemical shifts, defaults to "H"')
+	parser.add_argument('--overall_runtime', nargs=1, help='prints overall runtime')
+	args = parser.parse_args()
+	if not args.overall_runtime:
+		args.overall_runtime = [None]
+	report_calibration(method=args.method[0],basis_set=args.basis_set[0],
+		nuclei_type=args.nuclei_type[0],overall_runtime=args.overall_runtime[0])

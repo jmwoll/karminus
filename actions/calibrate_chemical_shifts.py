@@ -40,7 +40,7 @@ def calibrate_chemical_shifts(basis_set="aug-cc-pVDZ",
 	# 	method.lower() + "_" + basis_set.lower().replace('-','')) + os.sep
 	project_dir = path_tool.project_dir()
 	xyz_dir = path_tool.xyz_dir()
-	output_dir = path_too.output_dir(basis_set=basis_set,method=method)
+	output_dir = path_tool.output_dir(basis_set=basis_set,method=method)
 
 	print("all .xyz-files in {} will be used".format(xyz_dir))
 
@@ -51,9 +51,19 @@ def calibrate_chemical_shifts(basis_set="aug-cc-pVDZ",
 
 
 if __name__ == '__main__':
-	if len(sys.argv) == 2+1: # two real arguments
-		method = sys.argv[1]
-		basis_set = sys.argv[2]
-		calibrate_chemical_shifts(basis_set=basis_set, method=method)
-	else:
-		calibrate_chemical_shifts()
+	import argparse
+	from argparse import RawDescriptionHelpFormatter
+
+	parser = argparse.ArgumentParser(description=(
+	    """Creates a chemical shift calibration for all geometries in xyz\\default_db, e.g.
+
+	    $ python calibrate_chemical_shifts.py --method BP86 --basis_set ccpVDZ
+
+will carry out all chemical shift calculations necessary for the calibration.
+	"""
+	), formatter_class=RawDescriptionHelpFormatter)
+
+	parser.add_argument('--method', nargs=1, help='the computational method, e.g. B3LYP')
+	parser.add_argument('--basis_set', nargs=1, help='the basis set to use, e.g. ccpVDZ')
+	args = parser.parse_args()
+	calibrate_chemical_shifts(basis_set=args.basis_set[0], method=args.method[0])

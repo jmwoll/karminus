@@ -14,43 +14,36 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from ORCAunleashed import orca
-from karminus.tools import path_tool
-import sys,os
+from karminus.actions import report_calibration
 
-def run_calculation(xyzfile=None,basis_set=None,method=None):
-    assert(xyzfile is not None)
-    assert(basis_set is not None)
-    assert(method is not None)
-    orca_input = """
-!{} {} NMR
+def violin_plot(method=None,basis_set=None,nuclei_type=None):
+    rep = report_calibration.report_calibration(method=method,basis_set=basis_set,nuclei_type=nuclei_type)
+    from matplotlib import pyplot as plt
+    import seaborn as sns
 
-*xyzfile 0 1 guess.xyz
-""".format(basis_set,method).strip()
-    project_dir = path_tool.project_dir()
-    output_dir = path_tool.output_dir(basis_set=basis_set,method=method)
-    orca.run_orca(orca_input=orca_input,xyzfile=xyzfile,
-        jobname=(xyzfile.split(os.sep)[-1]).split('.')[0],output_root_dir=output_dir)
-
+    pxs,pys = rep['pxs'],rep['pys']
+    plt.figure(figsize=(3,6))
+    ax = sns.violinplot(y=pys)
+    plt.show()
 
 if __name__ == '__main__':
     import argparse
     from argparse import RawDescriptionHelpFormatter
 
     parser = argparse.ArgumentParser(description=(
-        """Given the xyzfile <xyzfile>, computational method <method> and the basis_set <basis_set>,
-    actions\\run_calculation.py runs an NMR calculation. For example,
+        """Prints a violin plot for the calibration. For example,
 
-        $ python run_calculation.py --xyzfile patho-to-xyzfile.xyz --method BP86 --basis_set ccpVDZ
+        $ python violin_plot.py --method BP86 --basis_set ccpVDZ --nuclei_type H
 
-    will run the appropriate BP86//ccpVDZ NMR job.
+    will show a violin plot of the EXPERIMENTAL 1H chemical shifts calibration.
+    (The method and basis_set are just needed to execute actions/report_calibration
+    internally.)
     """
     ), formatter_class=RawDescriptionHelpFormatter)
 
-    parser.add_argument('--xyzfile', nargs=1, help='the file-path of the xyzfile')
     parser.add_argument('--method', nargs=1, help='the computational method, e.g. B3LYP')
     parser.add_argument('--basis_set', nargs=1, help='the basis set to use, e.g. ccpVDZ')
     parser.add_argument('--nuclei_type', nargs=1, help='the type of nuclei for which to compute chemical shifts, defaults to "H"')
     args = parser.parse_args()
     
-    run_calculation(xyzfile=args.xyzfile[0],method=args.method[0],basis_set=args.basis_set[0])
+    violin_plot(method=args.method[0],basis_set=args.basis_set[0],nuclei_type=args.nuclei_type[0])

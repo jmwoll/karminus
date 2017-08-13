@@ -23,7 +23,7 @@ def project_dir():
 	return os.path.dirname(_script_dir())
 
 def xyz_dir():
-	rslt = os.path.join(project_dir,'xyz')
+	rslt = os.path.join(project_dir(),'xyz')
 	return os.path.join(rslt, 'default_db') + os.sep
 
 def output_dir(basis_set=None, method=None):
