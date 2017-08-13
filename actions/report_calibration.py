@@ -47,9 +47,6 @@ def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_ru
 				c_shifts[e_atom] = sum(homotopic_shifts)/float(len(homotopic_shifts))
 		comp_shifts[exp] = c_shifts
 
-
-	#nuclei_type = 'C'
-
 	pxs,pys = [],[]
 	for exp in e_shifts:
 		for shift_lab in e_shifts[exp]:
