@@ -24,7 +24,8 @@ def project_dir():
 
 def xyz_dir():
 	rslt = os.path.join(project_dir(),'xyz')
-	return os.path.join(rslt, 'default_db') + os.sep
+	#return os.path.join(rslt, 'default_db') + os.sep
+	return os.path.join(rslt, 'through_space_db') + os.sep
 
 def output_dir(basis_set=None, method=None):
 	assert(basis_set is not None and method is not None)

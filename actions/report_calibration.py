@@ -36,6 +36,7 @@ def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_ru
 		nuclei_type = 'H'
 
 	for exp in e_shifts:
+		print(exp)
 		rep = orca.reporter_by_name(exp,output_root_dir=path_tool.output_dir(basis_set=basis_set, method=method))
 		c_shifts = tools.chemical_shifts(rep)
 		for e_atom in e_shifts[exp]:
