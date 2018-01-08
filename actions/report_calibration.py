@@ -17,7 +17,7 @@
 import sys
 import re
 from ORCAunleashed import orca,tools
-from karminus.experiment import exp_chemical_shifts
+from karminus.experiment import default_db_exp_chemical_shifts
 from karminus.tools import path_tool
 from matplotlib import pyplot as plt
 from scipy.stats import linregress
@@ -30,7 +30,7 @@ def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_ru
 	calib_report = { }
 	comp_shifts = { }
 
-	e_shifts = exp_chemical_shifts.e_shifts
+	e_shifts = default_db_exp_chemical_shifts.e_shifts
 
 	if nuclei_type is None:
 		nuclei_type = 'H'
