@@ -18,11 +18,12 @@ import sys
 import re
 from ORCAunleashed import orca,tools
 from karminus.experiment import default_db_exp_chemical_shifts
-from karminus.tools import load_tool,path_tool
+from karminus.tools import load_tool,path_tool,log_tool
 from karminus.tools import violin_plot_tool
 from matplotlib import pyplot as plt
 from scipy.stats import linregress
 
+log = log_tool.logger(__name__)
 
 def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_runtime=None, json=None, violin_plot=None):
 	if overall_runtime is None or overall_runtime.lower() == 'false':
@@ -72,6 +73,10 @@ def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_ru
 	calib_report['pxs'] = pxs
 	calib_report['pys'] = pys
 
+	log.debug('eshifts',e_shifts)
+	log.debug('pxs',pxs)
+	log.debug('pys',pys)
+
 	slope, intercept, r_value, p_value, std_err = linregress(pxs, pys)
 	print("slope {} | intercept {} | r2 {} | stddev {}".format(
 		slope,intercept,r_value**2,std_err))
@@ -114,7 +119,7 @@ def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_ru
 	print("overall runtime: {} minutes".format(overall_runtime))
 
 	if violin_plot:
-		print('VIOLIN PLOT')
+		log.debug('VIOLIN PLOT')
 		violin_plot_tool.violin_plot(calib_report)
 
 	return calib_report
@@ -147,4 +152,4 @@ if __name__ == '__main__':
 	if not args.overall_runtime:
 		args.overall_runtime = [None]
 	report_calibration(method=args.method[0],basis_set=args.basis_set[0],
-		nuclei_type=args.nuclei_type[0],overall_runtime=args.overall_runtime[0],violin_plot=args.violin_plot)
+		nuclei_type=args.nuclei_type[0],overall_runtime=args.overall_runtime[0],violin_plot=args.violin_plot,json=args.json[0])
