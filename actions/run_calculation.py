@@ -1,4 +1,4 @@
-# Copyright (C) 2017  Jan Wollschläger <jmw.tau@gmail.com>
+# Copyright (C) 2017-2018  Jan Wollschläger <janmwoll@gmail.com>
 # This file is part of karminus.
 #
 # karminus is free software: you can redistribute it and/or modify
@@ -52,5 +52,5 @@ if __name__ == '__main__':
     parser.add_argument('--basis_set', nargs=1, help='the basis set to use, e.g. ccpVDZ')
     parser.add_argument('--nuclei_type', nargs=1, help='the type of nuclei for which to compute chemical shifts, defaults to "H"')
     args = parser.parse_args()
-    
+
     run_calculation(xyzfile=args.xyzfile[0],method=args.method[0],basis_set=args.basis_set[0])

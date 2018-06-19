@@ -1,4 +1,4 @@
-# Copyright (C) 2017  Jan Wollschläger <jmw.tau@gmail.com>
+# Copyright (C) 2017-2018  Jan Wollschläger <janmwoll@gmail.com>
 # This file is part of karminus.
 #
 # karminus is free software: you can redistribute it and/or modify
@@ -19,11 +19,12 @@ import re
 from ORCAunleashed import orca,tools
 from karminus.experiment import default_db_exp_chemical_shifts
 from karminus.tools import load_tool,path_tool
+from karminus.tools import violin_plot_tool
 from matplotlib import pyplot as plt
 from scipy.stats import linregress
 
 
-def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_runtime=None, json=None):
+def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_runtime=None, json=None, violin_plot=None):
 	if overall_runtime is None or overall_runtime.lower() == 'false':
 		overall_runtime = False
 	import seaborn as sns
@@ -111,6 +112,11 @@ def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_ru
 			overall_runtime += tools.run_time(rep)
 
 	print("overall runtime: {} minutes".format(overall_runtime))
+
+	if violin_plot:
+		print('VIOLIN PLOT')
+		violin_plot_tool.violin_plot(calib_report)
+
 	return calib_report
 
 if __name__ == '__main__':
@@ -135,9 +141,10 @@ if __name__ == '__main__':
 	parser.add_argument('--basis_set', nargs=1, help='the basis set to use, e.g. ccpVDZ')
 	parser.add_argument('--nuclei_type', nargs=1, help='the type of nuclei for which to compute chemical shifts, defaults to "H"')
 	parser.add_argument('--overall_runtime', nargs=1, help='prints overall runtime')
-	parser.add_argument('--json', nargs=1, help='The json file containing the experimental chemical shifts')
+	parser.add_argument('--json', nargs=1, help='the json file containing the experimental chemical shifts')
+	parser.add_argument('--violin_plot', action="store_true", help="makes a violin plot of the chemical shifts")
 	args = parser.parse_args()
 	if not args.overall_runtime:
 		args.overall_runtime = [None]
 	report_calibration(method=args.method[0],basis_set=args.basis_set[0],
-		nuclei_type=args.nuclei_type[0],overall_runtime=args.overall_runtime[0])
+		nuclei_type=args.nuclei_type[0],overall_runtime=args.overall_runtime[0],violin_plot=args.violin_plot)

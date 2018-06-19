@@ -1,4 +1,4 @@
-# Copyright (C) 2017  Jan Wollschläger <jmw.tau@gmail.com>
+# Copyright (C) 2017-2018  Jan Wollschläger <janmwoll@gmail.com>
 # This file is part of karminus.
 #
 # karminus is free software: you can redistribute it and/or modify
@@ -16,8 +16,8 @@
 
 from karminus.actions import report_calibration
 
-def violin_plot(method=None,basis_set=None,nuclei_type=None):
-    rep = report_calibration.report_calibration(method=method,basis_set=basis_set,nuclei_type=nuclei_type)
+def violin_plot(rep): #method=None,basis_set=None,nuclei_type=None):
+    #rep = report_calibration.report_calibration(**locals())#method=method,basis_set=basis_set,nuclei_type=nuclei_type)
     from matplotlib import pyplot as plt
     import seaborn as sns
 
@@ -45,5 +45,5 @@ if __name__ == '__main__':
     parser.add_argument('--basis_set', nargs=1, help='the basis set to use, e.g. ccpVDZ')
     parser.add_argument('--nuclei_type', nargs=1, help='the type of nuclei for which to compute chemical shifts, defaults to "H"')
     args = parser.parse_args()
-    
+
     violin_plot(method=args.method[0],basis_set=args.basis_set[0],nuclei_type=args.nuclei_type[0])
