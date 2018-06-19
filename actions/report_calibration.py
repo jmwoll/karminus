@@ -18,19 +18,25 @@ import sys
 import re
 from ORCAunleashed import orca,tools
 from karminus.experiment import default_db_exp_chemical_shifts
-from karminus.tools import path_tool
+from karminus.tools import load_tool,path_tool
 from matplotlib import pyplot as plt
 from scipy.stats import linregress
 
 
-def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_runtime=None):
+def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_runtime=None, json=None):
 	if overall_runtime is None or overall_runtime.lower() == 'false':
 		overall_runtime = False
 	import seaborn as sns
 	calib_report = { }
 	comp_shifts = { }
 
-	e_shifts = default_db_exp_chemical_shifts.e_shifts
+	e_shifts = None
+	if json is None:
+		e_shifts = default_db_exp_chemical_shifts.e_shifts
+	else:
+		e_shifts = load_tool.chemical_shifts_from_json_file(json)
+
+	assert(e_shifts is not None)
 
 	if nuclei_type is None:
 		nuclei_type = 'H'
@@ -129,6 +135,7 @@ if __name__ == '__main__':
 	parser.add_argument('--basis_set', nargs=1, help='the basis set to use, e.g. ccpVDZ')
 	parser.add_argument('--nuclei_type', nargs=1, help='the type of nuclei for which to compute chemical shifts, defaults to "H"')
 	parser.add_argument('--overall_runtime', nargs=1, help='prints overall runtime')
+	parser.add_argument('--json', nargs=1, help='The json file containing the experimental chemical shifts')
 	args = parser.parse_args()
 	if not args.overall_runtime:
 		args.overall_runtime = [None]
