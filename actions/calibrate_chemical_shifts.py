@@ -20,9 +20,11 @@ from karminus.tools import path_tool
 from ORCAunleashed import orca
 
 def calibrate_chemical_shifts(basis_set="aug-cc-pVDZ",
-	method="B3LYP"):
+	method="B3LYP",xyz_dir=None):
 	print("calibrating chemical shifts")
 	print("this might take a while ...")
+	if basis_set is None or str(basis_set).lower() == "none":
+		basis_set = ""
 	orca_input = """
 !{} {} NMR
 
@@ -33,7 +35,11 @@ def calibrate_chemical_shifts(basis_set="aug-cc-pVDZ",
 	print(orca_input)
 
 	project_dir = path_tool.project_dir()
-	xyz_dir = path_tool.xyz_dir()
+	if xyz_dir is None:
+		xyz_dir = path_tool.xyz_dir()
+	else:
+		if not path_tool.isdir(xyz_dir):
+			xyz_dir = path_tool.xyz_parent_dir() + os.sep + xyz_dir + os.sep
 	output_dir = path_tool.output_dir(basis_set=basis_set,method=method)
 
 	print("all .xyz-files in {} will be used".format(xyz_dir))
@@ -59,5 +65,6 @@ will carry out all chemical shift calculations necessary for the calibration.
 
 	parser.add_argument('--method', nargs=1, help='the computational method, e.g. B3LYP')
 	parser.add_argument('--basis_set', nargs=1, help='the basis set to use, e.g. ccpVDZ')
+	parser.add_argument('--xyz_dir', nargs=1, help='the directory containing the xyz files used for calibration')
 	args = parser.parse_args()
-	calibrate_chemical_shifts(basis_set=args.basis_set[0], method=args.method[0])
+	calibrate_chemical_shifts(basis_set=args.basis_set[0], method=args.method[0], xyz_dir=args.xyz_dir[0])

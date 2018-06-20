@@ -19,7 +19,7 @@ import logging
 import sys
 
 def logger(name):
-    file_handler = logging.FileHandler(filename='tmp.log')
+    file_handler = logging.FileHandler(filename='log_messages.log')
     stdout_handler = logging.StreamHandler(sys.stdout)
     handlers = [file_handler, stdout_handler]
 

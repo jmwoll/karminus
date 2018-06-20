@@ -22,12 +22,18 @@ def _script_dir():
 def project_dir():
 	return os.path.dirname(_script_dir())
 
+def xyz_parent_dir():
+	return os.path.join(project_dir(),'xyz')
+
 def xyz_dir():
 	rslt = os.path.join(project_dir(),'xyz')
-	#return os.path.join(rslt, 'default_db') + os.sep
-	return os.path.join(rslt, 'through_space_db') + os.sep
+	return os.path.join(rslt, 'default_db') + os.sep
+	#return os.path.join(rslt, 'through_space_db') + os.sep
 
 def output_dir(basis_set=None, method=None):
 	assert(basis_set is not None and method is not None)
 	return os.path.join(os.path.join(project_dir(),'output'),
 	 	method.lower() + "_" + basis_set.lower().replace('-','')) + os.sep
+
+def isdir(d):
+	return os.path.isdir(d)
