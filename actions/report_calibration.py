@@ -58,7 +58,7 @@ def _extend_conformers(e_shifts,conf_ind,max_confs):
 
 
 
-def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_runtime=None, json=None, violin_plot=None, average_conformers=False, conformer_indicator="__conf",
+def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_runtime=None, json=None, violin_plot=None, average_conformers=True, conformer_indicator="__conf",
 	max_conformers=10):
 	if overall_runtime is None or overall_runtime.lower() == 'false':
 		overall_runtime = False
@@ -74,13 +74,14 @@ def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_ru
 
 	assert(e_shifts is not None)
 
+	extended_e_shifts = e_shifts
 	if average_conformers:
-		e_shifts = _extend_conformers(e_shifts,conformer_indicator,max_conformers)
+		extended_e_shifts = _extend_conformers(e_shifts,conformer_indicator,max_conformers)
 
 	if nuclei_type is None:
 		nuclei_type = 'H'
 
-	for exp in e_shifts:
+	for exp in extended_e_shifts:
 		print(exp)
 		rep = orca.reporter_by_name(exp,output_root_dir=path_tool.output_dir(basis_set=basis_set, method=method))
 		c_shifts = None
@@ -90,7 +91,7 @@ def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_ru
 			print("skipping on experiment {}, because file was not found".format(exp))
 		if c_shifts is None:
 			continue
-		for e_atom in e_shifts[exp]:
+		for e_atom in extended_e_shifts[exp]:
 			if ',' in e_atom:
 				labs = e_atom.split(',')
 				labs = [re.sub('[a-zA-Z]','',lab) for lab in labs]
@@ -100,7 +101,7 @@ def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_ru
 		comp_shifts[exp] = c_shifts
 
 	if average_conformers:
-		e_shifts = _average_conformers(e_shifts, conformer_indicator)
+		comp_shifts = _average_conformers(comp_shifts, conformer_indicator)
 
 	pxs,pys = [],[]
 	for exp in e_shifts:
