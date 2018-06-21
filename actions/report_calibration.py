@@ -16,6 +16,7 @@
 
 import sys
 import re
+from collections import defaultdict
 from ORCAunleashed import orca,tools
 from karminus.experiment import default_db_exp_chemical_shifts
 from karminus.tools import load_tool,path_tool,log_tool
@@ -25,7 +26,40 @@ from scipy.stats import linregress
 
 log = log_tool.logger(__name__)
 
-def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_runtime=None, json=None, violin_plot=None):
+
+def _average_conformers(e_shifts,conformer_indicator):
+	def avg(lst):
+		return sum(lst) / float(len(lst))
+	rslt = defaultdict(lambda: {})
+	for exp in e_shifts:
+		for shift_lab in e_shifts[exp]:
+			trunc_exp = exp
+			if conformer_indicator in exp:
+				trunc_exp = exp.split(conformer_indicator)[0]
+			if trunc_exp in rslt and shift_lab in rslt[trunc_exp]:
+				rslt[trunc_exp][shift_lab].append(e_shifts[exp][shift_lab])
+			else:
+				rslt[trunc_exp][shift_lab] = [e_shifts[exp][shift_lab]]
+	log.debug(rslt)
+	new_rslt = defaultdict(lambda: {})
+	for exp in rslt:
+		for shift_lab in rslt[exp]:
+			new_rslt[exp][shift_lab] = avg(rslt[exp][shift_lab])
+	return new_rslt
+	#return { k: avg(v) for k,v in rslt }
+
+def _extend_conformers(e_shifts,conf_ind,max_confs):
+	rslt = { }
+	for k in e_shifts:
+		for idx in range(1,max_confs+1):
+			rslt[k+conf_ind+"_{}".format(idx)] = e_shifts[k]
+		rslt[k] = e_shifts[k]
+	return rslt
+
+
+
+def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_runtime=None, json=None, violin_plot=None, average_conformers=False, conformer_indicator="__conf",
+	max_conformers=10):
 	if overall_runtime is None or overall_runtime.lower() == 'false':
 		overall_runtime = False
 	import seaborn as sns
@@ -40,13 +74,22 @@ def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_ru
 
 	assert(e_shifts is not None)
 
+	if average_conformers:
+		e_shifts = _extend_conformers(e_shifts,conformer_indicator,max_conformers)
+
 	if nuclei_type is None:
 		nuclei_type = 'H'
 
 	for exp in e_shifts:
 		print(exp)
 		rep = orca.reporter_by_name(exp,output_root_dir=path_tool.output_dir(basis_set=basis_set, method=method))
-		c_shifts = tools.chemical_shifts(rep)
+		c_shifts = None
+		try:
+			c_shifts = tools.chemical_shifts(rep)
+		except:
+			print("skipping on experiment {}, because file was not found".format(exp))
+		if c_shifts is None:
+			continue
 		for e_atom in e_shifts[exp]:
 			if ',' in e_atom:
 				labs = e_atom.split(',')
@@ -55,6 +98,9 @@ def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_ru
 				homotopic_shifts = [c_shifts[lab+atom_type] for lab in labs]
 				c_shifts[e_atom] = sum(homotopic_shifts)/float(len(homotopic_shifts))
 		comp_shifts[exp] = c_shifts
+
+	if average_conformers:
+		e_shifts = _average_conformers(e_shifts, conformer_indicator)
 
 	pxs,pys = [],[]
 	for exp in e_shifts:
@@ -73,9 +119,9 @@ def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_ru
 	calib_report['pxs'] = pxs
 	calib_report['pys'] = pys
 
-	log.debug('eshifts',e_shifts)
-	log.debug('pxs',pxs)
-	log.debug('pys',pys)
+	log.debug('eshifts {}'.format(e_shifts))
+	log.debug('pxs {}'.format(pxs))
+	log.debug('pys {}'.format(pys))
 
 	slope, intercept, r_value, p_value, std_err = linregress(pxs, pys)
 	print("slope {} | intercept {} | r2 {} | stddev {}".format(
@@ -148,8 +194,9 @@ if __name__ == '__main__':
 	parser.add_argument('--overall_runtime', nargs=1, help='prints overall runtime')
 	parser.add_argument('--json', nargs=1, help='the json file containing the experimental chemical shifts')
 	parser.add_argument('--violin_plot', action="store_true", help="makes a violin plot of the chemical shifts")
+	parser.add_argument('--confs', action="store_true", help="considers additional conformers if provided as additional xyz files")
 	args = parser.parse_args()
 	if not args.overall_runtime:
 		args.overall_runtime = [None]
 	report_calibration(method=args.method[0],basis_set=args.basis_set[0],
-		nuclei_type=args.nuclei_type[0],overall_runtime=args.overall_runtime[0],violin_plot=args.violin_plot,json=args.json[0])
+		nuclei_type=args.nuclei_type[0],overall_runtime=args.overall_runtime[0],violin_plot=args.violin_plot,json=args.json[0],average_conformers=args.confs)
