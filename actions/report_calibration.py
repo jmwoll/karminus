@@ -159,9 +159,14 @@ def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_ru
 	print("with {} chemical shifts".format(count))
 	if overall_runtime:
 		overall_runtime = 0.0
-		for exp in e_shifts:
-			rep = orca.reporter_by_name(exp,output_root_dir=path_tool.output_dir(basis_set=basis_set, method=method))
-			overall_runtime += tools.run_time(rep)
+		for exp in extended_e_shifts:
+			try:
+				rep = orca.reporter_by_name(exp,output_root_dir=path_tool.output_dir(basis_set=basis_set, method=method))
+				rt = tools.run_time(rep)
+				if rt is not None:
+					overall_runtime += rt 
+			except:
+				pass
 
 	print("overall runtime: {} minutes".format(overall_runtime))
 
