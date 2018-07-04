@@ -19,11 +19,11 @@ from karminus.tools import path_tool
 from ORCAunleashed import orca,tools
 import sys
 
-def apply_calibration(jobname=None,basis_set=None, method=None, nuclei_type=None):
+def apply_calibration(jobname=None,basis_set=None, method=None, nuclei_type=None, average_conformers=None, json=None):
     if nuclei_type is None:
         nuclei_type = 'H'
     rep = orca.reporter_by_name(jobname,output_root_dir=path_tool.output_dir(basis_set=basis_set, method=method))
-    calib = report_calibration.report_calibration(basis_set=basis_set,method=method,nuclei_type=nuclei_type)
+    calib = report_calibration.report_calibration(basis_set=basis_set,method=method,nuclei_type=nuclei_type,average_conformers=average_conformers, json=json)
     c_shifts = { }
     uncal_c_shifts = tools.chemical_shifts(rep)
     for key in uncal_c_shifts:
@@ -54,9 +54,11 @@ if __name__ == '__main__':
     parser.add_argument('--method', nargs=1, help='the computational method, e.g. B3LYP')
     parser.add_argument('--basis_set', nargs=1, help='the basis set to use, e.g. ccpVDZ')
     parser.add_argument('--nuclei_type', nargs=1, help='the type of nuclei for which to compute chemical shifts, defaults to "H"')
+    parser.add_argument('--confs', action="store_true", help="considers additional conformers if provided as additional xyz files")
+    parser.add_argument('--json', nargs=1, help='the json file containing the experimental chemical shifts')
 
     args = parser.parse_args()
 
     if not args.nuclei_type:
         args.nuclei_type = ["H"]
-    apply_calibration(jobname=args.jobname[0],method=args.method[0],basis_set=args.basis_set[0],nuclei_type=args.nuclei_type[0])
+    apply_calibration(jobname=args.jobname[0],method=args.method[0],basis_set=args.basis_set[0],nuclei_type=args.nuclei_type[0],average_conformers=args.confs,json=args.json[0])

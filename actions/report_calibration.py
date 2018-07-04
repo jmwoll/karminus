@@ -60,8 +60,8 @@ def _extend_conformers(e_shifts,conf_ind,max_confs):
 
 def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_runtime=None, json=None, violin_plot=None, average_conformers=True, conformer_indicator="__conf",
 	max_conformers=10):
-	if overall_runtime is None or overall_runtime.lower() == 'false':
-		overall_runtime = False
+	#if overall_runtime is None or overall_runtime.lower() == 'false':
+	#	overall_runtime = False
 	import seaborn as sns
 	calib_report = { }
 	comp_shifts = { }
@@ -164,7 +164,7 @@ def report_calibration(basis_set=None, method=None, nuclei_type=None, overall_ru
 				rep = orca.reporter_by_name(exp,output_root_dir=path_tool.output_dir(basis_set=basis_set, method=method))
 				rt = tools.run_time(rep)
 				if rt is not None:
-					overall_runtime += rt 
+					overall_runtime += rt
 			except:
 				pass
 
@@ -197,12 +197,12 @@ if __name__ == '__main__':
 	parser.add_argument('--method', nargs=1, help='the computational method, e.g. B3LYP')
 	parser.add_argument('--basis_set', nargs=1, help='the basis set to use, e.g. ccpVDZ')
 	parser.add_argument('--nuclei_type', nargs=1, help='the type of nuclei for which to compute chemical shifts, defaults to "H"')
-	parser.add_argument('--overall_runtime', nargs=1, help='prints overall runtime')
+	parser.add_argument('--overall_runtime', action="store_true", help='prints overall runtime')
 	parser.add_argument('--json', nargs=1, help='the json file containing the experimental chemical shifts')
 	parser.add_argument('--violin_plot', action="store_true", help="makes a violin plot of the chemical shifts")
 	parser.add_argument('--confs', action="store_true", help="considers additional conformers if provided as additional xyz files")
 	args = parser.parse_args()
-	if not args.overall_runtime:
-		args.overall_runtime = [None]
+	#if not args.overall_runtime:
+	#	args.overall_runtime = [None]
 	report_calibration(method=args.method[0],basis_set=args.basis_set[0],
-		nuclei_type=args.nuclei_type[0],overall_runtime=args.overall_runtime[0],violin_plot=args.violin_plot,json=args.json[0],average_conformers=args.confs)
+		nuclei_type=args.nuclei_type[0],overall_runtime=args.overall_runtime,violin_plot=args.violin_plot,json=args.json[0],average_conformers=args.confs)
